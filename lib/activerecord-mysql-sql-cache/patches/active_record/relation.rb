@@ -27,13 +27,16 @@ module ActiverecordMysqlSqlCache
           sql_cache(false)
         end
 
-        included do
-          def build_arel_with_sql_cache
-            build_arel_without_sql_cache.tap do |arel|
+        included do |base|
+          base.prepend(SqlCache)
+        end
+
+        module SqlCache
+          def build_arel
+            super.tap do |arel|
               arel.mysql_sql_cache = self.mysql_sql_cache_value
             end
           end
-          alias_method_chain :build_arel, :sql_cache
         end
       end
     end
