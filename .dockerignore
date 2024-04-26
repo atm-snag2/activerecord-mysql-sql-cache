@@ -1,0 +1,10 @@
+*
+!/*.gemspec
+!/.rspec
+!/Appraisals
+!/Gemfile
+!/Rakefile
+!/gemfiles
+!/lib
+!/log
+!/spec
