@@ -32,8 +32,8 @@ module ActiverecordMysqlSqlCache
         end
 
         module SqlCache
-          def build_arel
-            super.tap do |arel|
+          def build_arel(*args)
+            super(*args).tap do |arel|
               arel.mysql_sql_cache = self.mysql_sql_cache_value
             end
           end
