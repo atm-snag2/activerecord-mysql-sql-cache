@@ -14,22 +14,27 @@ module ActiverecordMysqlSqlCache
           module SqlCache
             def visit_Arel_Nodes_SelectCore(o, collector)
               result = super(o, collector)
-              case result
+              value = if result.respond_to?(:value)
+                        result.value
+                      else
+                        result
+                      end
+              case value
               when String
                 distinct = ' DISTINCT '
                 select = 'SELECT '
-                if result =~ /^#{select}/
-                  if idx = result.index(distinct)
-                    result.insert(idx + distinct.length, o.mysql_sql_cache.to_s)
+                if value =~ /^#{select}/
+                  if idx = value.index(distinct)
+                    value.insert(idx + distinct.length, o.mysql_sql_cache.to_s)
                   else
-                    result.insert(select.length, o.mysql_sql_cache.to_s)
+                    value.insert(select.length, o.mysql_sql_cache.to_s)
                   end
                 end
               else # Arel 6.0+
-                if idx = result.value.index('DISTINCT')
-                  result.value.insert(idx + 1, o.mysql_sql_cache.to_s)
+                if idx = value.index('DISTINCT')
+                  value.insert(idx + 1, o.mysql_sql_cache.to_s)
                 else
-                  result.value.insert(1, o.mysql_sql_cache.to_s)
+                  value.insert(1, o.mysql_sql_cache.to_s)
                 end
               end
               result
