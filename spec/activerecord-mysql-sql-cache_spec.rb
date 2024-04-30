@@ -3,7 +3,7 @@ require 'activerecord-mysql-sql-cache'
 require 'arproxy'
 
 class LastQueryLogger < Arproxy::Base
-  def execute(sql, name=nil)
+  def execute(sql, name=nil, **kwargs)
     Thread.current[:last_query] = sql
     super
   end
