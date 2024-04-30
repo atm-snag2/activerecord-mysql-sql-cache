@@ -70,7 +70,7 @@ describe 'ActiveRecord MySQL SQL_CACHE support' do
 
     it do
       expect(rel.distinct.select(:name).sql_cache.to_sql).to be_sql_like(
-        Arel::VERSION < '5.0' ?
+        Gem::Version.new(Arel::VERSION) < Gem::Version.new('5.0') ?
           "SELECT DISTINCT SQL_CACHE name FROM `products` LIMIT 1" :
           "SELECT DISTINCT SQL_CACHE `products`.`name` FROM `products` LIMIT 1"
       )
