@@ -19,25 +19,39 @@ module ActiverecordMysqlSqlCache
                       else
                         result
                       end
-              case value
-              when String
-                distinct = ' DISTINCT '
-                select = 'SELECT '
-                if value =~ /^#{select}/
-                  if idx = value.index(distinct)
-                    value.insert(idx + distinct.length, o.mysql_sql_cache.to_s)
-                  else
-                    value.insert(select.length, o.mysql_sql_cache.to_s)
-                  end
-                end
-              else # Arel 6.0+
-                if idx = value.index('DISTINCT')
-                  value.insert(idx + 1, o.mysql_sql_cache.to_s)
-                else
-                  value.insert(1, o.mysql_sql_cache.to_s)
+              mysql_sql_cache_str = o.mysql_sql_cache.to_s
+              if mysql_sql_cache_str != ''
+                case value
+                when String
+                  string_insert!(value, mysql_sql_cache_str)
+                else # Arel 6.x
+                  array_insert!(value, mysql_sql_cache_str)
                 end
               end
               result
+            end
+
+            def string_insert!(value, insert_str)
+              distinct = ' DISTINCT '
+              select = 'SELECT '
+              return unless value =~ /^#{select}/
+              idx = value.index(distinct)
+              pos = if idx
+                      idx + distinct.length
+                    else
+                      select.length
+                    end
+              value.insert(pos, insert_str)
+            end
+
+            def array_insert!(value, insert_str)
+              idx = value.index('DISTINCT')
+              pos = if idx
+                      idx + 1
+                    else
+                      1
+                    end
+              value.insert(pos, insert_str)
             end
           end
         end
