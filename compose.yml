@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    entrypoint: bundle exec appraisal rake spec
+    volumes:
+      - .git:/usr/src/app/.git
+      - ./lib:/usr/src/app/lib
+      - ./log:/usr/src/app/log
+      - ./gemfiles:/usr/src/app/gemfiles
+      - ./Appraisals:/usr/src/app/Appraisals
+      - ./spec:/usr/src/app/spec
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql2://root@mysql/ar_test
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: ar_test

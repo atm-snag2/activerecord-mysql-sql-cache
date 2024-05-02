@@ -1,0 +1,64 @@
+PATH
+  remote: ..
+  specs:
+    activerecord-mysql-sql-cache (0.1.1)
+      activerecord (>= 5.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activemodel (7.0.8.1)
+      activesupport (= 7.0.8.1)
+    activerecord (7.0.8.1)
+      activemodel (= 7.0.8.1)
+      activesupport (= 7.0.8.1)
+    activesupport (7.0.8.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+    appraisal (2.5.0)
+      bundler
+      rake
+      thor (>= 0.14.0)
+    arproxy (0.2.9)
+      activerecord (>= 4.2.0)
+    concurrent-ruby (1.2.3)
+    diff-lcs (1.5.1)
+    i18n (1.14.4)
+      concurrent-ruby (~> 1.0)
+    minitest (5.22.3)
+    mysql2 (0.5.6)
+    rake (13.2.1)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
+    thor (1.3.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  activerecord (~> 7.0.0)
+  activerecord-mysql-sql-cache!
+  appraisal
+  arproxy
+  bundler (~> 2)
+  mysql2
+  rake (>= 12.3.2)
+  rspec
+
+BUNDLED WITH
+   2.4.22

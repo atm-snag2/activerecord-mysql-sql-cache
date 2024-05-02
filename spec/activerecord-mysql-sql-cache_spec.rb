@@ -3,7 +3,7 @@ require 'activerecord-mysql-sql-cache'
 require 'arproxy'
 
 class LastQueryLogger < Arproxy::Base
-  def execute(sql, name=nil)
+  def execute(sql, name=nil, **kwargs)
     Thread.current[:last_query] = sql
     super
   end
@@ -70,7 +70,7 @@ describe 'ActiveRecord MySQL SQL_CACHE support' do
 
     it do
       expect(rel.distinct.select(:name).sql_cache.to_sql).to be_sql_like(
-        Arel::VERSION < '5.0' ?
+        Gem::Version.new(Arel::VERSION) < Gem::Version.new('5.0') ?
           "SELECT DISTINCT SQL_CACHE name FROM `products` LIMIT 1" :
           "SELECT DISTINCT SQL_CACHE `products`.`name` FROM `products` LIMIT 1"
       )
@@ -88,5 +88,21 @@ describe 'ActiveRecord MySQL SQL_CACHE support' do
     it { expect(Product.sql_cache(true).limit(1).to_sql).to  be_sql_like("SELECT SQL_CACHE `products`.* FROM `products` LIMIT 1") }
     it { expect(Product.sql_cache(false).limit(1).to_sql).to be_sql_like("SELECT SQL_NO_CACHE `products`.* FROM `products` LIMIT 1") }
     it { expect(Product.sql_no_cache.limit(1).to_sql).to     be_sql_like("SELECT SQL_NO_CACHE `products`.* FROM `products` LIMIT 1") }
+  end
+
+  context 'with distinct' do
+    it do
+      User.sql_cache.includes(:products).where(products: { name: nil }).count
+      expect(Thread.current[:last_query]).to be_sql_like("SELECT  SQL_CACHE COUNT(DISTINCT `users`.`id`) FROM `users` LEFT OUTER JOIN `products` ON `products`.`user_id` = `users`.`id` WHERE `products`.`name` IS NULL")
+    end
+
+    it do
+      # skip exception
+      begin
+        User.sql_cache.includes(:products).where(products: { name: nil }).size
+      rescue
+      end
+      expect(Thread.current[:last_query]).to be_sql_like("SELECT  SQL_CACHE COUNT(*) FROM (SELECT DISTINCT `users`.`id` FROM `users` LEFT OUTER JOIN `products` ON `products`.`user_id` = `users`.`id` WHERE `products`.`name` IS NULL) subquery_for_count")
+    end
   end
 end
