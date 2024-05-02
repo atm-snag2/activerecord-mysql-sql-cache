@@ -32,11 +32,13 @@ module ActiverecordMysqlSqlCache
             end
 
             def string_insert!(value, insert_str)
+              from = ' FROM '
               distinct = ' DISTINCT '
               select = 'SELECT '
               return unless value =~ /^#{select}/
               idx = value.index(distinct)
-              pos = if idx
+              from_pos = value.index(from)
+              pos = if idx && (!from_pos || idx < from_pos)
                       idx + distinct.length
                     else
                       select.length
@@ -46,7 +48,8 @@ module ActiverecordMysqlSqlCache
 
             def array_insert!(value, insert_str)
               idx = value.index('DISTINCT')
-              pos = if idx
+              from_pos = value.index('FROM')
+              pos = if idx && (!from_pos || idx < from_pos)
                       idx + 1
                     else
                       1
